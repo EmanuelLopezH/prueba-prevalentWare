@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "user" ADD COLUMN     "role" TEXT NOT NULL DEFAULT 'Admin',
+ALTER COLUMN "createdAt" SET DEFAULT CURRENT_TIMESTAMP,
+ALTER COLUMN "emailVerified" SET DEFAULT false;
