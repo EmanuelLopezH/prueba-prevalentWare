@@ -8,11 +8,18 @@ export default function MovementsPage() {
   const [tableData, setTableData] = useState<MovementWithUser[]>([]);
   const [showForm, setShowForm] = useState(false);
   const { session, loading } = useSession();
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/movements")
-      .then((res) => res.json())
-      .then((data) => setTableData(data));
+      .then((res) => {
+        if (!res.ok) throw new Error("Error al obtener movimientos");
+        return res.json();
+      })
+      .then((data) => {
+        setTableData(Array.isArray(data) ? data : []);
+      })
+      .catch((err) => setError(err.message));
   }, []);
 
   async function handleSubmit(formData: FormData) {
@@ -35,7 +42,8 @@ export default function MovementsPage() {
     setShowForm(false);
     window.location.reload();
   }
-
+  if (error)
+    return <p className="text-center mt-10 text-red-500">Error: {error}</p>;
   return (
     <div>
       <h2 className="text-2xl mb-4 text-center">

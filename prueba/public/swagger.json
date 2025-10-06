@@ -1,0 +1,216 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PrevalentWare API",
+    "description": "API REST para gestionar usuarios y movimientos, construida con Next.js",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/users": {
+      "get": {
+        "summary": "Obtener todos los usuarios",
+        "tags": ["Users"],
+        "responses": {
+          "200": {
+            "description": "Lista de usuarios",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/User" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Crear un nuevo usuario",
+        "tags": ["Users"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateUserDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Usuario creado exitosamente",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/User" }
+              }
+            }
+          },
+          "400": { "description": "Datos inválidos" }
+        }
+      }
+    },
+    "/api/users/{id}": {
+      "put": {
+        "summary": "Actualizar un usuario",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateUserDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Usuario actualizado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/User" }
+              }
+            }
+          },
+          "400": { "description": "ID inválido" },
+          "404": { "description": "Usuario no encontrado" }
+        }
+      },
+      "delete": {
+        "summary": "Eliminar un usuario",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Usuario eliminado" },
+          "400": { "description": "ID inválido" },
+          "404": { "description": "Usuario no encontrado" }
+        }
+      }
+    },
+    "/api/movements": {
+      "get": {
+        "summary": "Obtener todos los movimientos",
+        "tags": ["Movements"],
+        "responses": {
+          "200": {
+            "description": "Lista de movimientos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Movement" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Crear un nuevo movimiento",
+        "tags": ["Movements"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateMovementDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Movimiento creado exitosamente",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Movement" }
+              }
+            }
+          },
+          "400": { "description": "Datos inválidos" }
+        }
+      }
+    },
+    "/api/movements/{id}": {
+      "delete": {
+        "summary": "Eliminar un movimiento",
+        "tags": ["Movements"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Movimiento eliminado" },
+          "400": { "description": "ID inválido" },
+          "404": { "description": "Movimiento no encontrado" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "phone": { "type": "number" }
+        },
+        "required": ["id", "name", "email"]
+      },
+      "CreateUserDto": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "phone": { "type": "number" }
+        },
+        "required": ["name", "email"]
+      },
+      "UpdateUserDto": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "phone": { "type": "number" }
+        }
+      },
+      "Movement": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "concept": { "type": "string" },
+          "amount": { "type": "number" },
+          "date": { "type": "string", "format": "date-time" },
+          "userId": { "type": "string" }
+        },
+        "required": ["id", "concept", "amount", "date", "userId"]
+      },
+      "CreateMovementDto": {
+        "type": "object",
+        "properties": {
+          "concept": { "type": "string" },
+          "amount": { "type": "number" },
+          "date": { "type": "string", "format": "date-time" },
+          "userId": { "type": "string" }
+        },
+        "required": ["concept", "amount", "date", "userId"]
+      }
+    }
+  }
+}

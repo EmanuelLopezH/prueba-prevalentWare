@@ -1,16 +1,22 @@
 import swaggerJSDoc from "swagger-jsdoc";
 
 const options = {
-    definition: {
-        openapi: "3.0.0",
-        info: {
-            title: "API de ejemplo",
-            version: "1.0.0",
-            description: "API para gestionar movimientos y usuarios",
-        },
+  definition: {
+    openapi: "3.0.3",
+    info: {
+      title: "API Prueba PrevalentWare",
+      version: "1.0.0",
+      description: "Documentación de la API con Swagger para usuarios y movimientos",
     },
-    apis: ["./pages/api/*.ts", "./pages/api/**/*.ts"],
+    servers: [
+      {
+        url: "http://localhost:3000/api", // Cambia si tienes otro dominio
+      },
+    ],
+  },
+  apis: ["./pages/api/**/*.js"], // Aquí Swagger buscará anotaciones
 };
 
 const swaggerSpec = swaggerJSDoc(options);
+
 export default swaggerSpec;

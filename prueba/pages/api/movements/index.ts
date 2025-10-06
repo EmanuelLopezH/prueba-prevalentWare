@@ -1,19 +1,35 @@
+import { NextApiRequest, NextApiResponse } from "next";
+import { movementsService } from "@/lib/services/movementsService";
+import { requireAuth } from "@/lib/requireAuth";
+
 /**
  * @swagger
- * /api/movements:
+ * tags:
+ *   name: Movements
+ *   description: Endpoints para gestionar movimientos
+ */
+
+/**
+ * @swagger
+ * /movements:
  *   get:
- *     summary: Obtiene todos los movimientos
+ *     summary: Obtener todos los movimientos
+ *     tags: [Movements]
  *     responses:
  *       200:
- *         description: Lista de movimientos
+ *         description: Lista de movimientos obtenida correctamente
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Movement'
+ *
  *   post:
- *     summary: Crea un nuevo movimiento
+ *     summary: Crear un nuevo movimiento
+ *     tags: [Movements]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -22,19 +38,65 @@
  *             $ref: '#/components/schemas/MovementInput'
  *     responses:
  *       201:
- *         description: Movimiento creado
+ *         description: Movimiento creado exitosamente
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Movement'
  *       400:
- *         description: Datos inválidos
+ *         description: Faltan campos obligatorios
+ *       401:
+ *         description: No autorizado
+ *       500:
+ *         description: Error interno del servidor
  */
 
-import { NextApiRequest, NextApiResponse } from "next";
-import { movementsService } from "@/lib/services/movementsService";
-import { requireAuth } from "@/lib/requireAuth";
-
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Movement:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           example: "m1"
+ *         concept:
+ *           type: string
+ *           example: "Compra supermercado"
+ *         amount:
+ *           type: number
+ *           example: 150.75
+ *         userId:
+ *           type: string
+ *           example: "u1"
+ *         date:
+ *           type: string
+ *           format: date-time
+ *           example: "2025-10-05T20:00:00Z"
+ *
+ *     MovementInput:
+ *       type: object
+ *       required:
+ *         - concept
+ *         - amount
+ *         - userId
+ *         - date
+ *       properties:
+ *         concept:
+ *           type: string
+ *           example: "Pago de servicios"
+ *         amount:
+ *           type: number
+ *           example: 200.5
+ *         userId:
+ *           type: string
+ *           example: "u1"
+ *         date:
+ *           type: string
+ *           format: date-time
+ *           example: "2025-10-05T20:00:00Z"
+ */
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     

@@ -10,41 +10,56 @@ export default function UsersPage() {
   const [usersTable, setUsersTable] = useState<User[]>([]);
   const [userId, setUserId] = useState("");
   const [showForm, setShowForm] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
+  // Fetch inicial
   useEffect(() => {
     fetch(`/api/users/`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setUsersTable(data);
-        } else if (Array.isArray(data.users)) {
-          setUsersTable(data.users);
-        } else {
-          setUsersTable([]);
-        }
+      .then((res) => {
+        if (!res.ok) throw new Error("Error al obtener usuarios");
+        return res.json();
       })
-      .catch(() => setUsersTable([]));
+      .then((data) => {
+        setUsersTable(Array.isArray(data) ? data : data.users ?? []);
+      })
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
   }, []);
 
   async function handleSubmit(formData: FormData) {
-    "use server";
     const rawFormData = Object.fromEntries(formData);
 
     const userData = {
-      name: rawFormData.nombre,
-      role: rawFormData.rol,
+      name: rawFormData.nombre as string,
+      role: rawFormData.rol as string,
     };
 
-    await fetch(`/api/users/${userId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(userData),
-    });
+    try {
+      const res = await fetch(`/api/users/${userId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userData),
+      });
 
-    setUserId("");
-    setShowForm(false);
-    window.location.reload();
+      if (!res.ok) throw new Error("Error al actualizar usuario");
+
+      // actualizar el estado local sin recargar
+      setUsersTable((prev) =>
+        prev.map((u) => (u.id === userId ? { ...u, ...userData } : u))
+      );
+
+      setUserId("");
+      setShowForm(false);
+    } catch (err) {
+      console.error(err);
+      alert("Hubo un error al actualizar el usuario.");
+    }
   }
+
+  if (loading) return <p className="text-center mt-10">Cargando usuarios...</p>;
+  if (error)
+    return <p className="text-center mt-10 text-red-500">Error: {error}</p>;
 
   return (
     <div>
@@ -66,7 +81,7 @@ export default function UsersPage() {
                     Correo
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
-                    Telefono
+                    Teléfono
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
                     Acciones
@@ -87,6 +102,7 @@ export default function UsersPage() {
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
                       <button
+                        className="text-blue-600 hover:underline"
                         onClick={() => {
                           setUserId(u.id);
                           setShowForm(true);
@@ -104,7 +120,7 @@ export default function UsersPage() {
           <div className="flex flex-col justify-around text-center mt-10 bg-gray-200 p-6 rounded-lg w-[400px] mx-auto">
             <h3 className="text-[25px] mb-4">Editar Usuario</h3>
             <form action={handleSubmit}>
-              <div className="mb-4 felx flex-col">
+              <div className="mb-4 flex flex-col">
                 <label htmlFor="nombre" className="block text-left">
                   Nombre
                 </label>
@@ -113,9 +129,10 @@ export default function UsersPage() {
                   id="nombre"
                   name="nombre"
                   className="border p-2 w-full"
+                  required
                 />
               </div>
-              <div className="mb-4 felx flex-col">
+              <div className="mb-4 flex flex-col">
                 <label htmlFor="rol" className="block text-left">
                   Rol
                 </label>
@@ -124,6 +141,7 @@ export default function UsersPage() {
                   id="rol"
                   name="rol"
                   className="border p-2 w-full"
+                  required
                 />
               </div>
               <div className="flex justify-around">
@@ -134,6 +152,7 @@ export default function UsersPage() {
                   Guardar
                 </button>
                 <button
+                  type="button"
                   onClick={() => {
                     setShowForm(false);
                     setUserId("");
