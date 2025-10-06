@@ -5,7 +5,7 @@ export const userRepository = {
     findUnique: async (id: string) => {
         return prisma.user.findUnique({ where: { id } });
     },
-    create: async (data: { name: string; email: string; phone?: number }) => {
+    create: async (data: { name: string; email: string; phone?: string }) => {
     return prisma.user.create({ data });
   },
     update: async ( id: string, data: Partial<{name: string, role: string}> ) => {

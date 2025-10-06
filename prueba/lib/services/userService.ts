@@ -4,7 +4,7 @@ export const userService = {
     getAllUsers: async () => {
     return await userRepository.findAll();
     },
-    createUser: async (data: { name: string; email: string; phone?: number }) => {
+    createUser: async (data: { name: string; email: string; phone?: string }) => {
     return await userRepository.create(data);
   },
     updateUser: async (id: string, data: Partial<{ name: string; role: string }>) => {
