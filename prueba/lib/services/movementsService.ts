@@ -1,11 +1,12 @@
 import { movementsRepository } from "../repositories/movementsRepository";
 import { userRepository } from "../repositories/userRepository";
+import { MovementWithUser } from "../types/movements";
 
 export const movementsService = {
-    getAllMovements: async () => {
-        return await movementsRepository.findAll();
-    },
-    createMovement: async (data: { concept: string; amount: number; userId: string }) => {
+    getAllMovements: async (): Promise<MovementWithUser[]> => {
+    return movementsRepository.findAll();
+  },
+    createMovement: async (data: { concept: string; amount: number; userId: string; date: Date }) => {
 
         const userExists = await userRepository.findUnique(data.userId);
         if (!userExists) {

@@ -19,7 +19,7 @@ model User {
   email         String      @unique
   emailVerified Boolean     @default(false)
   image         String?
-  phone         Int?        @unique
+  phone         String?     @db.VarChar(10)
   role          String      @default("Admin") // Roles: Admin, User
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt

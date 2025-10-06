@@ -33,25 +33,31 @@
 
 import { NextApiRequest, NextApiResponse } from "next";
 import { movementsService } from "@/lib/services/movementsService";
+import { requireAuth } from "@/lib/requireAuth";
 
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    
     if (req.method === 'GET') {
         const movements = await movementsService.getAllMovements();
         return res.status(200).json(movements);
     }
-
+    
+    const session = await requireAuth(req, res);
+    if (!session) return
+    
     if (req.method === 'POST') {
-        const { concept, amount, userId } = req.body;
+        const { concept, amount, date, userId } = req.body;
         try{
-            if (!concept || !amount || !userId) {
+            if (!concept || !amount || !userId || !date) {
                 return res.status(400).json({ message: "Concept, amount, date and userId are required" });
             }
 
             const newMovement = await movementsService.createMovement({
                 concept,
                 amount: Number(amount),
-                userId
+                userId,
+                date: new Date(date)
             });
             return res.status(201).json(newMovement);
         } catch (error: unknown) {

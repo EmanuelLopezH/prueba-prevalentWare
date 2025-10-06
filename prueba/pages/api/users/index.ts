@@ -1,9 +1,13 @@
 
 import { userService } from "@/lib/services/userService";
 import { NextApiRequest, NextApiResponse } from "next";
+import { requireAuth } from "@/lib/requireAuth";
 
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse){
+
+    const session = await requireAuth(req, res);
+    if (!session) return
 
     if (req.method === 'GET'){
         const users = await userService.getAllUsers();

@@ -1,7 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { movementsService } from "@/lib/services/movementsService";
+import { requireAuth } from "@/lib/requireAuth";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+
+    const session = await requireAuth(req, res);
+    if (!session) return
     const { id } = req.query;
 
     if (req.method === "DELETE") {

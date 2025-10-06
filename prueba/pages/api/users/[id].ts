@@ -1,8 +1,12 @@
+import { requireAuth } from "@/lib/requireAuth";
 import { userService } from "@/lib/services/userService";
 import { NextApiRequest, NextApiResponse } from "next";
 
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+
+    const session = await requireAuth(req, res);
+      if (!session) return
 
     const { id } = req.query;
 
